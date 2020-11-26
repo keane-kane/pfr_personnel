@@ -5,16 +5,47 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping\JoinColumn;
-use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Security\Core\User\UserInterface;
-use ApiPlatform\Core\Bridge\Doctrine\MongoDbOdm\Filter\OrderFilter;
-use ApiPlatform\Core\Bridge\Doctrine\MongoDbOdm\Filter\RangeFilter;
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
- * @ApiResource(
+ * @ORM\InheritanceType("JOINED")
+ * @ORM\DiscriminatorColumn(name="profile", type="string")
+ * @ORM\DiscriminatorMap(
+ *      {"user" = "User", "apprenant" = "Apprenant", "admin"="Admin", "formateur"="Formateur", " cm"="Cm"}
+ *  )
+ * 
+ * @ApiFilter(BooleanFilter::class, properties={"archive"=false})
+ *  @ApiResource(
+ *     attributes={
+ *         "pagination_items_per_page"=7,
+ *          "security"="is_granted('ROLE_ADMIN')",
+ *          "security_message"="Acces refusé vous n'avez pas l'autorisation"
+ *     },
+ *     collectionOperations={
+ *          "get"={
+ *                "path"="/users"
+ *              }, 
+ *          "post"={
+ *                "path"="/users",
+ *              }
+ *      },
+ *     itemOperations={
+ *         "GET"={
+ *                "path"="/users/{id}"
+ *            },
+ *         "PUT"={
+ *             "path"="/users/{id}"
+ *          },
+ *         "DELETE"={
+ *             "path"="/users/{id}"
+ *          },
+ *  }
  * )
  */
 class User implements UserInterface
@@ -24,10 +55,11 @@ class User implements UserInterface
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    protected $id;
 
     /**
-     * @ORM\Column(type="string", length=180, unique=true)
+     * @ORM\Column(type="string", length=180, unique=false)
+     * @Assert\NotBlank(message="Le Libelle est obligatoire")
      */
     protected $username;
 
@@ -36,8 +68,16 @@ class User implements UserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
+     * @Assert\NotBlank(message="Le Libelle est obligatoire")
      */
     protected $password;
+    
+    /**
+     * A non-persisted field that's used to create the encoded password.
+     *
+     * @var string
+     */
+    protected $plainPassword;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -55,25 +95,26 @@ class User implements UserInterface
     protected $email;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string")
      */
     protected $phone;
 
     /**
-     * @ORM\Column(type="blob")
+     * @ORM\Column(type="blob", nullable =true)
      */
     protected $avatar;
 
     /**
      * @ORM\ManyToOne(targetEntity=Profile::class, inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
+     * ApiSubresource()
      */
     protected $profil;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    protected $archive;
+    protected $archive = false;
 
     public function getId(): ?int
     {
@@ -131,6 +172,19 @@ class User implements UserInterface
         return $this;
     }
 
+    public function getPlainPassword()
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword($plainPassword)
+    {
+        $this->plainPassword = $plainPassword;
+        // forces the object to look "dirty" to Doctrine. Avoids
+        // Doctrine *not* saving this entity, if only plainPassword changes
+        $this->password = null;
+    }
+
     /**
      * @see UserInterface
      */
@@ -145,7 +199,7 @@ class User implements UserInterface
     public function eraseCredentials()
     {
         // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        $this->plainPassword = null;
     }
 
     public function getPrenom(): ?string
@@ -198,11 +252,14 @@ class User implements UserInterface
 
     public function getAvatar()
     {
-        return $this->avatar;
+        $avatar = @stream_get_contents($this->avatar);
+        @fclose($this->avatar);
+        return base64_encode($avatar);
     }
 
     public function setAvatar($avatar): self
     {
+
         $this->avatar = $avatar;
 
         return $this;

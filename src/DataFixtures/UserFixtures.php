@@ -1,12 +1,18 @@
 <?php
+namespace App\DataFixtures;
 
+use App\Entity\Cm;
 use Faker\Factory;
 use App\Entity\User;
+use App\Entity\Admin;
+use App\Entity\Apprenant;
+use App\Entity\Formateur;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-class UserFixtures extends Fixture
+class UserFixtures extends Fixture implements DependentFixtureInterface
 {
     private $encoder;
 
@@ -18,21 +24,89 @@ class UserFixtures extends Fixture
     public function load(ObjectManager $manager)
     {
         $faker = Factory::create('fr_FR');
-        
-        $user = new User();
-        $user->setEmail($faker->email);
-        $user->setUsername(strtolower($libelle) . $i);
-        $user->setNom($faker->lastName);
-        $user->setPrenom($faker->firstName);
+       
+        for($i = 0; $i < 5; ++$i){
+            $user = new Admin();
+            $user->setEmail($faker->email);
+            $user->setNom($faker->lastName);
 
-        //Génération des Users
-        $password = $this->encoder->encodePassword($user, 'admin');
-        $user->setPlainPassword('admin');
-        $user->setPassword($password);
-        $manager->persist($user);
+            $user->setUsername(ProfileFixtures::ADMIN_USER_REFERENCE.$i);
+            $user->setProfil($this->getReference(ProfileFixtures::ADMIN_USER_REFERENCE));
+            $user->setPrenom($faker->firstName);
+            $user->setPhone($faker->phoneNumber);
+            $user->setAvatar($faker->imageUrl());
+            $user->setArchive(false);
+
+            $password = $this->encoder->encodePassword($user, ProfileFixtures::ADMIN_USER_REFERENCE);
+            $user->setPassword($password);
+
+
+            $manager->persist($user);
+            $manager->flush();
+              
+        }
+
+        for($i = 0; $i < 5; ++$i){
+            $user = new Formateur();
+            $user->setEmail($faker->email);
+            $user->setNom($faker->lastName);
+            $user->setAvatar($faker->imageUrl());
+            $user->setUsername(ProfileFixtures::FORMATEUR_USER_REFERENCE.$i);
+            $user->setProfil($this->getReference(ProfileFixtures::FORMATEUR_USER_REFERENCE));
+            $user->setPrenom($faker->firstName);
+            $user->setPhone($faker->phoneNumber);
+            $user->setArchive(false);
+
+            $password = $this->encoder->encodePassword($user, ProfileFixtures::FORMATEUR_USER_REFERENCE);
+            $user->setPassword($password);
+            $manager->persist($user);
+          
+              
+        }
+
+        for($i = 0; $i < 5; ++$i){
+            $user = new Apprenant();
+            $user->setEmail($faker->email);
+            $user->setNom($faker->lastName);
+            $user->setAvatar($faker->imageUrl());
+            $user->setUsername(ProfileFixtures::APPRENANT_USER_REFERENCE.$i);
+            $user->setProfil($this->getReference(ProfileFixtures::APPRENANT_USER_REFERENCE));
+            $user->setPrenom($faker->firstName);
+            $user->setPhone($faker->phoneNumber);
+            $user->setArchive(false);
+
+            $password = $this->encoder->encodePassword($user, ProfileFixtures::APPRENANT_USER_REFERENCE);
+            $user->setPassword($password);
+
+            $manager->persist($user);
+            
+              
+        }
+
+        for($i = 0; $i < 5; ++$i){
+            $user = new Cm();
+            $user->setEmail($faker->email);
+            $user->setNom($faker->lastName);
+            $user->setAvatar($faker->imageUrl());
+            $user->setUsername(ProfileFixtures::CM_USER_REFERENCE.$i);
+            $user->setProfil($this->getReference(ProfileFixtures::CM_USER_REFERENCE));
+            $user->setPrenom($faker->firstName);
+            $user->setPhone($faker->phoneNumber);
+            $user->setArchive(false);
+
+            $password = $this->encoder->encodePassword($user, ProfileFixtures::CM_USER_REFERENCE);
+            $user->setPassword($password);
+
+            $manager->persist($user);
+              
+        }
         $manager->flush();
-
-        // other fixtures can get this object using the UserFixtures::ADMIN_USER_REFERENCE constant
-        $this->addReference(self::ADMIN_USER_REFERENCE, $userAdmin);
     }
+    public function getDependencies()
+    {
+        return array(
+            ProfileFixtures::class,
+        );
+    }
+    
 }

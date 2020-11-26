@@ -3,41 +3,73 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\ProfilsRepository;
+use App\Repository\ProfileRepository;
+use ApiPlatform\Core\Annotation\ApiFilter;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 
 /**
- * @ORM\Entity(repositoryClass=ProfilsRepository::class)
- *   @ApiResource(
- *)
+ * @ORM\Entity(repositoryClass=ProfileRepository::class) 
+ * @ApiFilter(BooleanFilter::class, properties={"archive"=false})
+ * @ApiResource(
+ *    routePrefix= "admin",
+ *    attributes={
+ *         "pagination_items_per_page"=20,
+ *          "security"="is_granted('ROLE_ADMIN')",
+ *          "security_message"="Acces refusé vous n'avez pas l'autorisation"
+ *     },
+ *     collectionOperations={
+ *          "get"={
+ *                "path"="/profils"
+ *              },
+*             "post"={
+*                "path"="/profils"
+*              }
+ *           },
+ *     itemOperations={
+ *         "GET"={
+ *              "path"="/profils/{id}",
+ *              },
+ *         "DELETE"={
+ *                "path"="/profils/{id}",
+ *              },
+ *          "get_user_in_profil"={
+ *                "path"="/profils/{id}/users",
+ *                "method"="GET",
+ *              }
+ *  }
+ * )
  */
 class Profile
 {
-    /**
+   /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
-
-    /**
-     * @ORM\Column(type="string", length=255)
+    protected $id;
+    
+  /**
+     * @ORM\Column(type="string", length=255, nullable=false)
+     * @Assert\NotBlank(message="Le Libelle est obligatoire")
      */
     private $libelle;
 
     /**
-     * @ORM\OneToMany(targetEntity=User::class, mappedBy="profil")
+     * @ORM\OneToMany(targetEntity=User::class, mappedBy="profil" ,cascade={"persist","remove"})
+     * ApiSubresource()
      */
     private $users;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", nullable=false)
+     * @Assert\NotBlank(message="Le Libelle est obligatoire")
      */
-    private $archive;
+    private $archive = 0;
 
     public function __construct()
     {
