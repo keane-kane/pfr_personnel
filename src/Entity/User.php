@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Profile;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping\JoinColumn;
@@ -19,34 +20,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
  * @ORM\DiscriminatorMap(
  *      {"user" = "User", "apprenant" = "Apprenant", "admin"="Admin", "formateur"="Formateur", " cm"="Cm"}
  *  )
- * 
  * @ApiFilter(BooleanFilter::class, properties={"archive"=false})
- *  @ApiResource(
- *     attributes={
- *         "pagination_items_per_page"=7,
- *          "security"="is_granted('ROLE_ADMIN')",
- *          "security_message"="Acces refusé vous n'avez pas l'autorisation"
- *     },
- *     collectionOperations={
- *          "get"={
- *                "path"="/users"
- *              }, 
- *          "post"={
- *                "path"="/users",
- *              }
- *      },
- *     itemOperations={
- *         "GET"={
- *                "path"="/users/{id}"
- *            },
- *         "PUT"={
- *             "path"="/users/{id}"
- *          },
- *         "DELETE"={
- *             "path"="/users/{id}"
- *          },
- *  }
- * )
+ * @ApiResource()
  */
 class User implements UserInterface
 {
@@ -107,7 +82,6 @@ class User implements UserInterface
     /**
      * @ORM\ManyToOne(targetEntity=Profile::class, inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
-     * ApiSubresource()
      */
     protected $profil;
 
@@ -116,6 +90,8 @@ class User implements UserInterface
      */
     protected $archive = false;
 
+
+ 
     public function getId(): ?int
     {
         return $this->id;

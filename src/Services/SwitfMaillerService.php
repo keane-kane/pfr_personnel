@@ -1,8 +1,9 @@
 <?php
 
+namespace App\Services;
 
 
-class Email{
+final class SwitfMaillerService{
 
     public function sendEmail($user, \Swift_Mailer $mailer)
     {

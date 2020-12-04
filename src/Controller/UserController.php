@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\ProfileRepository;
-use App\services\UserServices;
+use App\Services\UserServices;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -50,11 +50,6 @@ class UserController extends AbstractController
      * @Route(
      *     path="/api/users",
      *     methods={"POST"},
-     *     defaults={
-     *          "__controller"="App\Controller\UserController::addUser",
-     *          "__api_resource_class"=User::class,
-     *          "__api_collection_operation_name"="add_user"
-     *     }
      * )
      */
     public function addUser(
@@ -76,11 +71,6 @@ class UserController extends AbstractController
      * @Route(
      *     path="/api/users/{id}",
      *     methods={"PUT"},
-     *     defaults={
-     *          "__controller"="App\Controller\UserController::addUser",
-     *          "__api_resource_class"=User::class,
-     *          "__api_collection_operation_name"="add_user"
-     *     }
      * )
      */
     public function updateUser(

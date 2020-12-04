@@ -209,4 +209,131 @@ class SwitchUserVoter extends Voter {
         return true;
     }
 
+       /**
+     * @Route(
+     *      path="api/amdin/users/{id}",
+     *      methods={"GET"}
+     * )
+     */
+    public function getProfile(User $user)
+    {
+        return $this->json($user, Response::HTTP_OK);
+    }
+
+    // /**
+    //  * @Route(
+    //  *      path="api/amdin/users",
+    //  *      methods={"GET"}
+    //  * )
+    //  */
+    // public function getProfil(UserRepository $repo)
+    // {
+    //     $profil = $repo->findBy(['archive' => false]);
+
+    //     return $this->json($profil, Response::HTTP_OK);
+    // }
+    protected $request;
+    protected $serializer;
+    protected $validator;
+    protected $file;
+    protected $manager;
+    protected $encoder;
+
+   public function __construct(
+     SerializerInterface $serializer,
+     ValidatorInterface $validator,
+     UserServices $file,
+     EntityManagerInterface $manager,
+     UserPasswordEncoderInterface $encoder
+   //   Request $request
+     
+   )
+   {
+       $this->serialize = $serializer;
+       $this->validator = $validator;
+       $this->file      = $file;
+       $this->manager   = $manager;
+       $this->encoder   = $encoder;
+       // $this->request   = $request;
+
+   }
+
+
+
+
+
+   *  @ApiResource(
+   *     attributes={
+   *         "pagination_items_per_page"=7,
+   *          "security"="is_granted('ROLE_ADMIN')",
+   *          "security_message"="Acces refusé vous n'avez pas l'autorisation"
+   *     },
+   *     collectionOperations={
+   *          "get"={
+   *                "path"="/users",
+   *                "get"={"security"="is_granted('ROLE_ADMIN')", "security_message"="Only admins can add books."}
+   *              }, 
+   *          "post"={
+   *                "path"="/users",
+   *                "post"={"security"="is_granted('ROLE_ADMIN')", "security_message"="Only admins can add books."}
+   *              }
+   *      },
+   *     itemOperations={
+   *         "GET"={
+   *                "path"="/users/{id}"
+   *            },
+   *         "PUT"={
+   *             "path"="/users/{id}"
+   *          },
+   *         "DELETE"={
+   *             "path"="/users/{id}"
+   *          },
+   *  }
+   * )
+
+}<?php
+
+namespace App\DataPersister\UserDataPersister;
+
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
+use ApiPlatform\Core\DataPersister\DataPersisterInterface;
+
+final class UserDataPersister implements DataPersisterInterface
+{
+
+    private $entityManager;
+    public function __construct(EntityManagerInterface $entityManager,DataPersisterInterface $decorated)
+    {
+        $this->entityManager = $entityManager;
+        $this->decorated = $decorated;
+    }
+
+    public function supports($data): bool
+    {
+        return $data instanceof User;
+    }
+
+    public function persist($data)
+    {   
+        return $data;
+    }
+
+    public function remove($data)
+    {
+        $data->setArchive(true);
+        $this->entityManager->flush();
+        return $data;
+    }
+    public function remove($data)
+    {
+        $data->setArchive(true);
+        $users = $data->getUsers();
+        foreach($users as $u)
+            $u->setArchive(true);
+
+        $this->entityManager->flush();
+        return $data;
+    }
+    
 }

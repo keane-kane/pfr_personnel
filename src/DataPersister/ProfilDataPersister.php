@@ -1,19 +1,18 @@
 <?php
 
-namespace App\DataPersister\ProfilDataPersister;
+namespace App\DataPersister;
 
+use App\Entity\Profile;
 use Doctrine\ORM\EntityManagerInterface;
 use ApiPlatform\Core\DataPersister\DataPersisterInterface;
-use App\Entity\Profile;
 
 final class ProfilDataPersister implements DataPersisterInterface
 {
 
     private $entityManager;
-    public function __construct(EntityManagerInterface $entityManager,DataPersisterInterface $decorated)
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-        $this->decorated = $decorated;
     }
 
     public function supports($data): bool
@@ -36,6 +35,4 @@ final class ProfilDataPersister implements DataPersisterInterface
         $this->entityManager->flush();
         return $data;
     }
-
-    
 }

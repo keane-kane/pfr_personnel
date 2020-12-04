@@ -11,8 +11,8 @@ use ApiPlatform\Core\Annotation\ApiSubresource;
  * @ORM\Entity(repositoryClass=AdminRepository::class)
  * @ApiResource(
  *      routePrefix= "admin",
- *     attributes={
- *         "pagination_items_per_page"=20,
+ *      attributes={
+ *          "pagination_items_per_page"=20,
  *          "security"="is_granted('ROLE_ADMIN')",
  *          "security_message"="Acces refusé vous n'avez pas l'autorisation"
  *     },
@@ -26,26 +26,27 @@ use ApiPlatform\Core\Annotation\ApiSubresource;
  *      },
  *     itemOperations={
  *         "GET"={
- *              "path"="/{id}/users"
+ *              "path"="/users/{id}"
  *            },
  *         "PUT"={
- *             "path"="/{id}/users"
+ *             "path"="/users/{id}"
  *          },
- *      "DELETE"={
- *             "path"="/{id}/users"
+ *        "DELETE"={
+ *             "path"="/users/{id}"
  *          },
  *  }
  * )
  */
 class Admin extends User
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
+  /**
+     * @ORM\Id()
+     * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
     protected $id;
 
+    
     public function getId(): ?int
     {
         return $this->id;

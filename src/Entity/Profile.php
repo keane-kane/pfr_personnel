@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ProfileRepository;
 use ApiPlatform\Core\Annotation\ApiFilter;
@@ -16,44 +17,47 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
  * @ORM\Entity(repositoryClass=ProfileRepository::class) 
  * @ApiFilter(BooleanFilter::class, properties={"archive"=false})
  * @ApiResource(
- *    routePrefix= "admin",
+ *    routePrefix= "/admin",
  *    attributes={
  *         "pagination_items_per_page"=20,
  *          "security"="is_granted('ROLE_ADMIN')",
- *          "security_message"="Acces refusé vous n'avez pas l'autorisation"
+ *          "security_message"="Acces refusé vous n'avez pas l'RTRYUTIOIUYT"
  *     },
  *     collectionOperations={
- *          "get"={
- *                "path"="/profils"
+ *          "GET"={
+ *                "path"="/profils",
  *              },
-*             "post"={
-*                "path"="/profils"
-*              }
+ *           "get_user_in_profil"={
+ *                "path"="/profils/{id}/users",
+ *                "method"="GET",
+ *              },
+ *             "POST"={
+ *                "path"="/profils",
+ *              }
  *           },
  *     itemOperations={
  *         "GET"={
  *              "path"="/profils/{id}",
+ *              "method"="GET",
  *              },
  *         "DELETE"={
  *                "path"="/profils/{id}",
+ *                "method"="DELETE",
  *              },
- *          "get_user_in_profil"={
- *                "path"="/profils/{id}/users",
- *                "method"="GET",
- *              }
+ *         
  *  }
  * )
  */
 class Profile
 {
-   /**
+    /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
     protected $id;
-    
-  /**
+
+    /**
      * @ORM\Column(type="string", length=255, nullable=false)
      * @Assert\NotBlank(message="Le Libelle est obligatoire")
      */
@@ -61,7 +65,8 @@ class Profile
 
     /**
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="profil" ,cascade={"persist","remove"})
-     * ApiSubresource()
+     * @ApiSubresource()
+     * 
      */
     private $users;
 

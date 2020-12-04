@@ -2,13 +2,67 @@
 
 namespace App\Entity;
 
-use App\Repository\PromoRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Entity\Referenciel;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\PromoRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass=PromoRepository::class)
+  * @ApiResource(
+ *      attributes={
+ *         "pagination_enabled"=false
+ *     },
+ *     collectionOperations={
+ *          "GET"={
+ *              "path"="/admin/promo/",
+ *          },
+ *          "getGroupePrincipalInPromos"={
+ *              "method"="GET",
+ *              "path"="/admin/principal",
+ *              "controller"=App\Controller\Promos\GroupePrincipalInPromos::class
+ *          }, 
+ *           "get_apprenant_attente"={
+ *              "method"="GET",
+ *              "path"="/admin/promo/apprenants/attente",
+ *              "controller"=App\Controller\Promos\ApprenantEnAttente::class
+ *          }, 
+ *          "post"={
+ *              "path"="/admin/promo",
+ *              "security" = "is_granted('ROLE_ADMIN')",
+ *              "security_message"="Acces refusé vous n'avez pas l'autorisation"
+ *          }
+ *      },
+ *     itemOperations={
+ *         "GET"={
+ *              "path"="/admin/promo/{id}",
+ *               "security" = "is_granted('ROLE_ADMIN') or is_granted('ROLE_FORMATEUR')",
+ *              "security_message"="Acces refusé vous n'avez pas l'autorisation"
+ * *            },
+ *          "get_groupePrincipal_in_promo"={
+ *              "method"="GET",
+ *              "path"="/admin/promo/{id}/principal",
+ *              "controller"=App\Controller\Promos\GroupePrincipalInPromo::class
+ *          },
+ *          "get_referenciels_in_promo"={
+ *              "method"="GET",
+ *              "path"="/admin/promo/{id}/referenciels",
+ *              "controller"=App\Controller\Promos\ReferencielInPromos::class
+ *          },
+ *          "get_formateurs_in_promo"={
+ *              "method"="GET",
+ *              "path"="/admin/promo/{id}/formateurs",
+ *              "controller"=App\Controller\Promos\FormateursInPromo::class
+ *          },     
+ *         "PUT"={
+ *              "path"="/admin/promo/{id}",
+ *              "security" = "is_granted('ROLE_ADMIN')",
+ *              "security_message"="Acces refusé vous n'avez pas l'autorisation"
+ *              }
+ *  }
+ * )
  */
 class Promo
 {
@@ -74,9 +128,22 @@ class Promo
      */
     private $promoprofilsorti;
 
+    /**
+     * @ORM\OneToMany(targetEntity=CompetenceValides::class, mappedBy="promo")
+     */
+    private $competenceValides;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Referenciel::class, mappedBy="promos")
+     */
+    private $referenciels;
+
+
     public function __construct()
     {
         $this->promoprofilsorti = new ArrayCollection();
+        $this->competenceValides = new ArrayCollection();
+        $this->referenciels = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -224,6 +291,63 @@ class Promo
     public function removePromoprofilsorti(profilSortie $promoprofilsorti): self
     {
         $this->promoprofilsorti->removeElement($promoprofilsorti);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CompetenceValides[]
+     */
+    public function getCompetenceValides(): Collection
+    {
+        return $this->competenceValides;
+    }
+
+    public function addCompetenceValide(CompetenceValides $competenceValide): self
+    {
+        if (!$this->competenceValides->contains($competenceValide)) {
+            $this->competenceValides[] = $competenceValide;
+            $competenceValide->setPromo($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompetenceValide(CompetenceValides $competenceValide): self
+    {
+        if ($this->competenceValides->removeElement($competenceValide)) {
+            // set the owning side to null (unless already changed)
+            if ($competenceValide->getPromo() === $this) {
+                $competenceValide->setPromo(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Referenciel[]
+     */
+    public function getReferenciels(): Collection
+    {
+        return $this->referenciels;
+    }
+
+    public function addReferenciel(Referenciel $referenciel): self
+    {
+        if (!$this->referenciels->contains($referenciel)) {
+            $this->referenciels[] = $referenciel;
+            $referenciel->addPromo($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReferenciel(Referenciel $referenciel): self
+    {
+        if ($this->referenciels->removeElement($referenciel)) {
+            $referenciel->removePromo($this);
+        }
 
         return $this;
     }

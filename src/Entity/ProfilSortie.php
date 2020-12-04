@@ -12,31 +12,40 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass=ProfilSortieRepository::class)
  * @ApiResource(
  *      routePrefix= "admin",
- *      attributes = {
- *              "pagination_items_per_page" = 2,         
- *      },
  *      collectionOperations={
  *            "get"={
- *                "path"="/profilsorties"
+ *                "method"="GET",
+ *                "path"="/profilsorties",
+ *                "securrity"="is_granted('ROLE_AMDIN' or 'ROLE_FORMATEUR')",
  *              },
- *             "post"={
- *                "path"="/profilsorties"
+ *           "post"={
+ *                "path"="/profilsorties",
+ *                "security_post_denormalize"="is_granted('EDIT', object)",
+
  *              },
- *              "getPromoByProfileSortie" = { 
- *                  "path"="/promo/{id}/profilsorties",
- *                  "method" = "get"
+ *           "getPromoByProfileSortie" = { 
+ *                 "method" = "get",
+ *                 "path"="/promo/{id}/profilsorties",
+ *                 "security"="is_granted('VIEW', object)",
  *              }
  *      },
  *      itemOperations= {
- *             "get"={
- *                "path"="/profilsorties/{id}"
+ *            "get"={
+ *                "path"="/profilsorties/{id}",
+ *                "security"="is_granted('VIEW', object)",
  *              },
- *             "getApprenantByProfileSortieOnPromo" = { 
- *                  "path"="/promo/{id_p}/profilsorties/{id}",
- *                  "method"= "get"
+ *            "getApprenantByProfileSortieOnPromo" = { 
+ *                 "method"= "get",
+ *                 "path"="/promo/{id_p}/profilsorties/{id}",
+ *                 "security"="is_granted('VIEW', object)",
  *              },
- *             "put"={
- *                "path"="/profilsorties/{id}"
+ *            "PUT"={
+ *                "path"="/profilsorties/{id}",
+ *                "security"="is_granted('PUT', object)",
+ *              },
+ *           "DELETE"={
+ *                "path"="/profilsorties/{id}",
+ *                "security"="is_granted('DELETE', object)",
  *              },
  *
  *       }

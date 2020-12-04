@@ -16,25 +16,29 @@ class ProfileController extends AbstractController
    /**
      * @Route(
      *      path="api/admin/profils/{id}",
-     *      name="get_user_in_profil",
-     *      methods={"GET"}
+     *      methods={"GET"},
+     *      defaults={
+     *          "__controller"="App\Controller\ProfileController::getProfile",
+     *          "__api_resource_class"=Profile::class
+     *     }
      * )
      */
     public function getProfile(Profile $profil)
     {
-        return $this->json($profil, Response::HTTP_OK);
+        dd("test");
+        //return $this->json($profil, Response::HTTP_OK);
     }
-  
-    
+
     /**
      * @Route(
-     *      path="api/admin/profils/{id}/users",
+     *      path="/api/admin/profils/{id}/users",
      *      name="get_user_in_profil",
      *      methods={"GET"}
      * )
      */
     public function getUserInProfile(Profile $profil)
     {
+        
         $users = $profil->getUsers();
         // dd($users);
         return $this->json($users, Response::HTTP_OK);

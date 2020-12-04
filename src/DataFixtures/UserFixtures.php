@@ -60,7 +60,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             $password = $this->encoder->encodePassword($user, ProfileFixtures::FORMATEUR_USER_REFERENCE);
             $user->setPassword($password);
             $manager->persist($user);
-          
+            $this->addReference("forma".$i,$user);
               
         }
 

@@ -6,14 +6,14 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class ProfilSortieVoter extends Voter
+class CmVoter extends Voter
 {
     protected function supports($attribute, $subject)
     {
         // replace with your own logic
         // https://symfony.com/doc/current/security/voters.html
-        return in_array($attribute, ['POST_EDIT', 'POST_VIEW'])
-            && $subject instanceof \App\Entity\ProfilSortie;
+        return in_array($attribute, ['EDIT', 'VIEW','DELETE','PUT'])
+            && $subject instanceof \App\Entity\Cm;
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
@@ -26,13 +26,17 @@ class ProfilSortieVoter extends Voter
 
         // ... (check conditions and return true to grant permission) ...
         switch ($attribute) {
-            case 'POST_EDIT':
-                // logic to determine if the user can EDIT
-                // return true or false
+            case 'EDIT':
+                return in_array($user->getRoles()[0],['ROLE_ADMIN']);
                 break;
-            case 'POST_VIEW':
-                // logic to determine if the user can VIEW
-                // return true or false
+            case 'VIEW':
+              return in_array($user->getRoles()[0],['ROLE_ADMIN','ROLE_CM']);
+                break;
+            case 'DELETE':
+                return in_array($user->getRoles()[0],['ROLE_ADMIN']);
+                break;
+            case 'PUT':
+                return in_array($user->getRoles()[0],['ROLE_ADMIN']);
                 break;
         }
 
