@@ -25,6 +25,7 @@ class NiveauFixtures extends Fixture
            $manager->persist($niv);
            $this->addReference("niv".$k, $niv);
         }
+     
         $manager->flush();
     }
 }

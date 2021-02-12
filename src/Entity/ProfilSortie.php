@@ -72,12 +72,14 @@ class ProfilSortie
     private $archive = 0;
 
     /**
-     * @ORM\OneToMany(targetEntity=Apprenant::class, mappedBy="profilSortie")
+     * @ORM\OneToMany(targetEntity=Apprenant::class, mappedBy="profilSortie", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
      */
     private $profilsorti;
 
     /**
      * @ORM\ManyToMany(targetEntity=Promo::class, mappedBy="promoprofilsorti")
+     * @ORM\JoinColumn(nullable=true)
      */
     private $promos;
 

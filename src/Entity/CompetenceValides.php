@@ -11,7 +11,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * @ORM\Entity(repositoryClass=CompetenceValidesRepository::class)
  * @ApiResource(
- *        routePrefix= "/admin/",
+ *        routePrefix= "admin",
  *        attributes= {
  *       }
  * )
@@ -42,6 +42,7 @@ class CompetenceValides
 
     /**
      * @ORM\OneToMany(targetEntity=Competence::class, mappedBy="competenceValides")
+     * @ORM\JoinColumn(nullable=true)
      */
     private $competence;
 

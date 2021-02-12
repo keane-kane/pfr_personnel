@@ -79,6 +79,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             $user->setPassword($password);
 
             $manager->persist($user);
+            $this->addReference("apprenant".$i,$user);
             
               
         }

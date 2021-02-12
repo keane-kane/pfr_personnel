@@ -5,12 +5,11 @@ namespace App\Controller;
 use App\Entity\Formateur;
 use App\Repository\ProfileRepository;
 use App\Services\UserServices;
-use App\Repository\UserRepository;
+use App\Repository\FormateurRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -51,14 +50,14 @@ class FormateurController extends AbstractController
      */
     public function updateFormateur(
       Request $request,
-      UserRepository $userripo,
+      FormateurRepository $formateurRepository,
       UserServices $file,
       EntityManagerInterface $manager,
       ProfileRepository $profilripo,
       UserPasswordEncoderInterface $encoder
       )
     {   
-         $user = $file->updateUser($request, $userripo,$profilripo,$manager,$encoder);
+         $user = $file->updateUser($request, $formateurRepository, $profilripo, $manager, $encoder);
         //  dd($user);
         return $this->json($user, Response::HTTP_CREATED);
     }

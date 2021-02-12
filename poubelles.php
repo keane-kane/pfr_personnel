@@ -137,7 +137,37 @@
    //    // dd($client);
    //     $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
    //  }
+   protected $request;
+   protected $serializer;
+   protected $validator;
+   protected $file;
+   protected $manager;
+   protected $encoder;
+   protected $userripo;
+   protected $profilripo;
 
+  public function __construct(
+    SerializerInterface $serializer,
+    ValidatorInterface $validator,
+    UserServices $file,
+    EntityManagerInterface $manager,
+    UserPasswordEncoderInterface $encoder,
+    UserRepository $userripo,
+    ProfileRepository $profilripo
+  //   Request $request
+    
+  )
+  {
+      $this->serialize = $serializer;
+      $this->validator = $validator;
+      $this->file      = $file;
+      $this->manager   = $manager;
+      $this->encoder   = $encoder;
+      $this->profilripo= $profilripo;
+      $this->userripo  = $userripo;
+      // $this->request   = $request;
+
+  }
 
          //function validator
          public function validateUser($user,$serializer,$validator)

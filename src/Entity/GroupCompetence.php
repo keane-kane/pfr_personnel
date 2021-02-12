@@ -2,10 +2,13 @@
 
 namespace App\Entity;
 
+use App\Entity\Competence;
+use App\Entity\Referenciel;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\GroupCompetenceRepository;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -41,10 +44,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * 
  *          },
  *           "PUT"={
- *              "path"="/admin/grpeCompetences/{id}",
+ *              "path"="/grpecompetences/{id}",
  *          },
  *         "DELETE"={
- *              "path"="grpeCompetences/{id}",
+ *              "path"="grpecompetences/{id}",
  *          }
  *     }
  * )
@@ -85,13 +88,14 @@ class GroupCompetence
     private $archive;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Competence::class, mappedBy="former")
+     * @ORM\ManyToMany(targetEntity=Competence::class, mappedBy="former", cascade={"persist"}))
+     * @ApiSubresource()
      * @Groups({ "grpecompetence:write","grpecompetence:read"})
      */
     private $competences;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Referenciel::class, inversedBy="groupeCompetences")
+     * @ORM\ManyToMany(targetEntity=Referenciel::class, inversedBy="groupeCompetences",cascade={"persist"}))
      */
     private $referenciel;
 

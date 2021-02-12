@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\GroupTagsRepository;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -14,9 +15,24 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      routePrefix="admin",
  *      denormalizationContext ={"groups"={"grptags:write"}},
  *      normalizationContext   ={"groups"={"grptags:read"}},
- *      collectionOperations   = {"GET","POST"},
- *      itemOperations         ={"GET","PUT","DELETE"},
-
+ * 
+ *      collectionOperations   ={"GET"= { "path" = "/grptags",},
+ * 
+ *                               "POST" = { "path" = "/grptags"},
+ *                              },
+ * 
+ *      itemOperations         ={"GET"= { "path" = "/grptags/{id}",},
+ * 
+ *                              "PUT"={ "path" = "/grptags/{id}",},
+ * 
+ *                              "get_tag_in_grptags" = 
+ *                               {
+ *                                   
+ *                                   "path"="/grptags/{id}/tags",
+ *                                   "method"="GET",
+ *                               },
+ *                               "DELETE" = { "path" = "/grptags/{id}",}
+ *                             },
  * )
  * @ORM\Entity(repositoryClass=GroupTagsRepository::class)
  */
@@ -26,7 +42,7 @@ class GroupTags
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"tags:read", "grptags:read"})
+     * @Groups({"tags:read", "grptags:read", "tags:write"})
      */
     private $id;
     
@@ -49,7 +65,8 @@ class GroupTags
     private $archive;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Tags::class, mappedBy="groupTags")
+     * @ORM\ManyToMany(targetEntity=Tags::class, mappedBy="groupTags",cascade={"persist"})
+     * @ApiSubresource()
      * @Groups({"grptags:read", "grptags:write"})
      */
     private $tags;

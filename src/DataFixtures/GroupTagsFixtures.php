@@ -4,11 +4,12 @@ namespace App\DataFixtures;
 
 use Faker\Factory;
 use App\Entity\GroupTags;
+use App\DataFixtures\TagsFixtures;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-class GroupTagsFixtures extends Fixture 
+class GroupTagsFixtures extends Fixture implements DependentFixtureInterface
 {  
 
     public function load(ObjectManager $manager)
@@ -21,14 +22,19 @@ class GroupTagsFixtures extends Fixture
             $gtags = new GroupTags();
             $gtags->setLibelle($value)
                  ->setArchive(false)
-                 ->setDescription($faker->description)
+                 ->setDescription($faker->text)
                  ->addTag($this->getReference("tags".$k))
-                 ->addTag($this->getReference("tags".$k+1))
-                 ->addTag($this->getReference("tags".$k+2))
+                 ->addTag($this->getReference("tags".($k+1)))
+                 ->addTag($this->getReference("tags".($k+2)))
             ;
             $manager->persist($gtags);
         }
         $manager->flush();
     }
- 
+    public function getDependencies()
+    {
+        return array (
+            TagsFixtures::class,
+        );
+    }
 }

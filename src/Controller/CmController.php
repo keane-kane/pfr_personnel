@@ -5,12 +5,11 @@ namespace App\Controller;
 use App\Entity\Cm;
 use App\Repository\ProfileRepository;
 use App\Services\UserServices;
-use App\Repository\UserRepository;
+use App\Repository\CmRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -52,14 +51,14 @@ class CmController extends AbstractController
      */
     public function updateCm(
       Request $request,
-      UserRepository $userripo,
+      CmRepository $cmRepository,
       UserServices $file,
       EntityManagerInterface $manager,
       ProfileRepository $profilripo,
       UserPasswordEncoderInterface $encoder
       )
     {   
-         $user = $file->updateUser($request, $userripo,$profilripo,$manager,$encoder);
+         $user = $file->updateUser($request, $cmRepository,$profilripo,$manager,$encoder);
         //  dd($user);
         return $this->json($user, Response::HTTP_CREATED);
     }

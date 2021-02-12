@@ -12,12 +12,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * @ORM\Entity(repositoryClass=PromoRepository::class)
   * @ApiResource(
+        routePrefix = "amdin",
  *      attributes={
  *         "pagination_enabled"=false
  *     },
  *     collectionOperations={
  *          "GET"={
- *              "path"="/admin/promo/",
+ *              "path"="/promo",
  *          },
  *          "getGroupePrincipalInPromos"={
  *              "method"="GET",
@@ -30,34 +31,34 @@ use Doctrine\Common\Collections\ArrayCollection;
  *              "controller"=App\Controller\Promos\ApprenantEnAttente::class
  *          }, 
  *          "post"={
- *              "path"="/admin/promo",
+ *              "path"="/promo",
  *              "security" = "is_granted('ROLE_ADMIN')",
  *              "security_message"="Acces refusé vous n'avez pas l'autorisation"
  *          }
  *      },
  *     itemOperations={
  *         "GET"={
- *              "path"="/admin/promo/{id}",
+ *              "path"="/promo/{id}",
  *               "security" = "is_granted('ROLE_ADMIN') or is_granted('ROLE_FORMATEUR')",
  *              "security_message"="Acces refusé vous n'avez pas l'autorisation"
  * *            },
  *          "get_groupePrincipal_in_promo"={
  *              "method"="GET",
- *              "path"="/admin/promo/{id}/principal",
+ *              "path"="/promo/{id}/principal",
  *              "controller"=App\Controller\Promos\GroupePrincipalInPromo::class
  *          },
  *          "get_referenciels_in_promo"={
  *              "method"="GET",
- *              "path"="/admin/promo/{id}/referenciels",
+ *              "path"="/promo/{id}/referenciels",
  *              "controller"=App\Controller\Promos\ReferencielInPromos::class
  *          },
  *          "get_formateurs_in_promo"={
  *              "method"="GET",
- *              "path"="/admin/promo/{id}/formateurs",
+ *              "path"="/promo/{id}/formateurs",
  *              "controller"=App\Controller\Promos\FormateursInPromo::class
  *          },     
  *         "PUT"={
- *              "path"="/admin/promo/{id}",
+ *              "path"="/promo/{id}",
  *              "security" = "is_granted('ROLE_ADMIN')",
  *              "security_message"="Acces refusé vous n'avez pas l'autorisation"
  *              }
@@ -124,19 +125,24 @@ class Promo
     private $avatar;
 
     /**
-     * @ORM\ManyToMany(targetEntity=profilSortie::class, inversedBy="promos")
+     * @ORM\ManyToMany(targetEntity=profilSortie::class, inversedBy="promos",cascade={"persist"}))
      */
     private $promoprofilsorti;
 
     /**
-     * @ORM\OneToMany(targetEntity=CompetenceValides::class, mappedBy="promo")
+     * @ORM\OneToMany(targetEntity=CompetenceValides::class, mappedBy="promo",cascade={"persist"}))
      */
     private $competenceValides;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Referenciel::class, mappedBy="promos")
+     * @ORM\ManyToMany(targetEntity=Referenciel::class, mappedBy="promos",cascade={"persist"}))
      */
     private $referenciels;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Groupe::class, mappedBy="promos",cascade={"persist"}))
+     */
+    private $groupes;
 
 
     public function __construct()
@@ -144,6 +150,7 @@ class Promo
         $this->promoprofilsorti = new ArrayCollection();
         $this->competenceValides = new ArrayCollection();
         $this->referenciels = new ArrayCollection();
+        $this->groupes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -261,7 +268,9 @@ class Promo
 
     public function getAvatar()
     {
-        return $this->avatar;
+        $avatar = @stream_get_contents($this->avatar);
+        @fclose($this->avatar);
+        return base64_encode($avatar);
     }
 
     public function setAvatar($avatar): self
@@ -347,6 +356,36 @@ class Promo
     {
         if ($this->referenciels->removeElement($referenciel)) {
             $referenciel->removePromo($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Groupe[]
+     */
+    public function getGroupes(): Collection
+    {
+        return $this->groupes;
+    }
+
+    public function addGroupe(Groupe $groupe): self
+    {
+        if (!$this->groupes->contains($groupe)) {
+            $this->groupes[] = $groupe;
+            $groupe->setPromos($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGroupe(Groupe $groupe): self
+    {
+        if ($this->groupes->removeElement($groupe)) {
+            // set the owning side to null (unless already changed)
+            if ($groupe->getPromos() === $this) {
+                $groupe->setPromos(null);
+            }
         }
 
         return $this;

@@ -2,7 +2,7 @@
     "type": "project",
     "license": "proprietary",
     "require": {
-        "php": ">=7.2.5",
+        "php": "^7.4 | ^8",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "api-platform/core": "^2.5",
@@ -11,7 +11,7 @@
         "doctrine/doctrine-bundle": "^2.2",
         "doctrine/doctrine-migrations-bundle": "^3.0",
         "doctrine/orm": "^2.7",
-        "fzaninotto/faker": "^1.9",
+        "fzaninotto/faker": "^1.9.x-dev",
         "lexik/jwt-authentication-bundle": "^2.9",
         "nelmio/cors-bundle": "^2.1",
         "phpdocumentor/reflection-docblock": "^5.2",
@@ -75,6 +75,18 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
+        ],
+        "apache": [
+            "sudo /etc/init.d/apache2 stop",
+            "sudo /etc/init.d/apache2 start",
+            "symfony serve -d",
+            "symfony console c:c"
+        ],
+        "db": [
+            "symfony console d:d:drop --force",
+            "symfony console d:d:c",
+            "symfony console d:s:u -f",
+            "symfony console d:f:l -n"
         ]
     },
     "conflict": {

@@ -6,9 +6,8 @@ use Faker\Factory;
 use App\Entity\Tags;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-class TagsFixtures extends Fixture implements DependentFixtureInterface
+class TagsFixtures extends Fixture 
 {  
 
     public function load(ObjectManager $manager)
@@ -21,18 +20,13 @@ class TagsFixtures extends Fixture implements DependentFixtureInterface
             $tags = new Tags();
             $tags->setLibelle($value)
                  ->setArchive(false)
-                 ->setDescription($faker->description)
+                 ->setDescription($faker->text)
 
-            ;
+            ;  
+            $this->addReference('tags'.$k, $tags);
             $manager->persist($tags);
-            $this->addReference('tag'.$k, $tags);
         }
         $manager->flush();
     }
-    public function getDependencies()
-    {
-        return array (
-            GroupTagsFixtures::class,
-        );
-    }
+  
 }

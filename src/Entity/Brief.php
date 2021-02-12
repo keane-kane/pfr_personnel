@@ -11,46 +11,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
- * collectionOperations={
- *          "get",
- *          "getBriefs"={
- *              "method"="GET",
- *              "path"="/formateurs/briefs",
- *              "controller"=Brief::class
- *          },
- *           "getBriefApprenantsInPromo"={
- *              "method"="GET",
- *              "path"="/apprenants/promos/{id}/briefs",
- *              "controller"=Brief::class
- *          },
- *     "getBriefsFormateur"={
- *              "method"="GET",
- *              "path"="/formateurs/promos/{id}/briefs",
- *              "controller"=Brief::class
- *          },
- *     "getBriefBrouillonByFormateur"={
- *              "method"="GET",
- *              "path"="/formateurs/{id}/briefs/brouillons",
- *              "controller"=Brief::class
- *          },
- *     "getBriefValidByFormateur"={
- *              "method"="GET",
- *              "path"="/formateurs/{id<\d+>}/briefs/valide",
- *              "controller"=Brief::class
- *          }
- *      },
- *     itemOperations={
- *     "getBriefInPromo" = {
- *     "method"= "GET",
- *     "path"="formateurs/promos/{id_promo}/briefs/{id_brief}",
- *     "controller"=Brief::class
- *     },
- *     "getBriefsFormateur"={
- *              "method"="GET",
- *              "path"="/formateurs/promos/{id}/briefs",
- *              "controller"=Brief::class
- *          },
- *     }
+ * 
+ *      routePrefix = "admin",
+ *      denormalizationContext ={"groups"={"briefs:write"}},
+ *      normalizationContext   ={"groups"={"briefs:read"}},
+ * 
  * )
  * @ORM\Entity(repositoryClass=BriefRepository::class)
  */
@@ -60,90 +25,113 @@ class Brief
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"briefs:read", "briefs:write"})
      */
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255)*
+     * @Groups({"briefs:read", "briefs:write"})
      */
     private $langue;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"briefs:read", "briefs:write"})
      */
     private $nom;
 
     /**
      * @ORM\Column(type="text")
+     * @Groups({"briefs:read", "briefs:write"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="text")
+     * @Groups({"briefs:read", "briefs:write"})
      */
     private $contexte;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"briefs:read", "briefs:write"})
      */
     private $modalitePedagogigue;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"briefs:read", "briefs:write"})
      */
     private $critereEvaluation;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"briefs:read", "briefs:write"})
      */
     private $modaliteEvaluation;
 
     /**
      * @ORM\Column(type="blob", nullable=true)
+     * @Groups({"briefs:read", "briefs:write"})
      * 
      */
     private $avatar;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"briefs:read", "briefs:write"})
      */
     private $statut;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups({"briefs:read", "briefs:write"})
      */
     private $archive;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"briefs:read", "briefs:write"})
      */
     private $createdAt;
     
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"brief:read", "promo:read", "brief_groupe:read"})
+     * @Groups({"briefs:read", "briefs:write"})
      */
     private $etat;
 
     /**
      * @ORM\ManyToMany(targetEntity=Tags::class, inversedBy="briefs")
+     * @Groups({"briefs:read", "briefs:write"})
      */
     private $tags;
 
     /**
      * @ORM\ManyToOne(targetEntity=Formateur::class, inversedBy="briefs")
+     * @Groups({"briefs:read", "briefs:write"})
      */
     private $formateur;
 
     /**
      * @ORM\ManyToMany(targetEntity=Niveau::class, inversedBy="briefs")
+     * @Groups({"briefs:read", "briefs:write"})
      */
     private $niveaux;
+
+    /**
+     * @ORM\OneToMany(targetEntity=EtatBriefGroup::class, mappedBy="etatbriefs", cascade={"persist", "remove"})
+     * @Groups({"briefs:read", "briefs:write"})
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $etatBriefGroups;
 
     public function __construct()
     {
         $this->tags = new ArrayCollection();
         $this->niveaux = new ArrayCollection();
+        $this->etatBriefGroups = new ArrayCollection();
     }
 
     
@@ -238,6 +226,7 @@ class Brief
 
     public function getAvatar()
     {
+      
         return base64_encode(stream_get_contents($this->avatar));
     }
 
@@ -352,6 +341,36 @@ class Brief
     public function removeNiveau(Niveau $niveau): self
     {
         $this->niveaux->removeElement($niveau);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|EtatBriefGroup[]
+     */
+    public function getEtatBriefGroups(): Collection
+    {
+        return $this->etatBriefGroups;
+    }
+
+    public function addEtatBriefGroup(EtatBriefGroup $etatBriefGroup): self
+    {
+        if (!$this->etatBriefGroups->contains($etatBriefGroup)) {
+            $this->etatBriefGroups[] = $etatBriefGroup;
+            $etatBriefGroup->setEtatbriefs($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEtatBriefGroup(EtatBriefGroup $etatBriefGroup): self
+    {
+        if ($this->etatBriefGroups->removeElement($etatBriefGroup)) {
+            // set the owning side to null (unless already changed)
+            if ($etatBriefGroup->getEtatbriefs() === $this) {
+                $etatBriefGroup->setEtatbriefs(null);
+            }
+        }
 
         return $this;
     }

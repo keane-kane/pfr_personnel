@@ -23,7 +23,10 @@ use ApiPlatform\Core\Annotation\ApiSubresource;
  *              "path"="/users/apprenants"
  *         }, 
  *        "POST"={
- *              "path"="/users/apprenants"
+ * 
+ *              "path"="/users/apprenants",
+ *              "security"="is_granted('EDIT')",
+ *              "security_message"="Acces refusé vous n'avez pas l'autorisation",
  *         }
  *      },
  *     itemOperations={
@@ -65,12 +68,20 @@ class Apprenant extends User
 
     /**
      * @ORM\OneToMany(targetEntity=CompetenceValides::class, mappedBy="apprenant")
+     * @ORM\JoinColumn(nullable=true)
      */
     private $competenceValides;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Groupe::class, mappedBy="composer")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $groupes;
 
     public function __construct()
     {
         $this->competenceValides = new ArrayCollection();
+        $this->groupes = new ArrayCollection();
     }
 
     public function getProfilSortie(): ?ProfilSortie
@@ -110,6 +121,33 @@ class Apprenant extends User
             if ($competenceValide->getApprenant() === $this) {
                 $competenceValide->setApprenant(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Groupe[]
+     */
+    public function getGroupes(): Collection
+    {
+        return $this->groupes;
+    }
+
+    public function addGroupe(Groupe $groupe): self
+    {
+        if (!$this->groupes->contains($groupe)) {
+            $this->groupes[] = $groupe;
+            $groupe->addComposer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGroupe(Groupe $groupe): self
+    {
+        if ($this->groupes->removeElement($groupe)) {
+            $groupe->removeComposer($this);
         }
 
         return $this;

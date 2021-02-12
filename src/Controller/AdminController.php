@@ -21,47 +21,22 @@ class AdminController extends AbstractController
    
     public const ADMIN = "App\Entity\Admin";
     
-    protected $request;
-    protected $serializer;
-    protected $validator;
-    protected $file;
-    protected $manager;
-    protected $encoder;
-    protected $userripo;
-    protected $profilripo;
-
-   public function __construct(
-     SerializerInterface $serializer,
-     ValidatorInterface $validator,
-     UserServices $file,
-     EntityManagerInterface $manager,
-     UserPasswordEncoderInterface $encoder,
-     UserRepository $userripo,
-     ProfileRepository $profilripo
-   //   Request $request
-     
-   )
-   {
-       $this->serialize = $serializer;
-       $this->validator = $validator;
-       $this->file      = $file;
-       $this->manager   = $manager;
-       $this->encoder   = $encoder;
-       $this->profilripo= $profilripo;
-       $this->userripo  = $userripo;
-       // $this->request   = $request;
-
-   }
-
     /**
      * @Route(
      *     path="api/admin/users",
      *     methods={"POST"},
      * )
      */
-    public function addAdmin(Request $request)
+    public function addAdmin(
+        Request $request,
+        SerializerInterface $serializer,
+        ValidatorInterface $validator,
+        UserServices $file,
+        EntityManagerInterface $manager,
+        UserPasswordEncoderInterface $encoder
+    )
     {   
-        $user = $this->file->newUser($request, $this->serializer,$this->validator,self::ADMIN,$this->manager,$this->encoder);
+        $user = $file->newUser($request, $serializer,$validator,self::ADMIN,$manager,$encoder);
         return $this->json($user);
     }
 
@@ -76,9 +51,16 @@ class AdminController extends AbstractController
      *     }
      * )
      */
-    public function updateAdmin(Request $request)
+    public function updateAdmin(
+        Request $request,
+        UserRepository $userRepository,
+        UserServices $file,
+        EntityManagerInterface $manager,
+        ProfileRepository $profilripo,
+        UserPasswordEncoderInterface $encoder
+    )
     {
-         $user = $this->file->updateUser($request, $this->userripo,$this->profilripo,$this->manager,$this->encoder);
+         $user = $file->updateUser($request, $userRepository,$profilripo,$manager,$encoder);
         //  dd($user);
         return $this->json($user, Response::HTTP_CREATED);
     }

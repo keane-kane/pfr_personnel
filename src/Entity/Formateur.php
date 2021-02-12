@@ -57,13 +57,21 @@ class Formateur extends User
     protected $id;
 
     /**
-     * @ORM\OneToMany(targetEntity=Brief::class, mappedBy="formateur")
+     * @ORM\OneToMany(targetEntity=Brief::class, mappedBy="formateur", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
      */
     private $briefs;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Groupe::class, mappedBy="formateurs")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $groupes;
 
     public function __construct()
     {
         $this->briefs = new ArrayCollection();
+        $this->groupes = new ArrayCollection();
     }
 
     
@@ -97,6 +105,33 @@ class Formateur extends User
             if ($brief->getFormateur() === $this) {
                 $brief->setFormateur(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Groupe[]
+     */
+    public function getGroupes(): Collection
+    {
+        return $this->groupes;
+    }
+
+    public function addGroupe(Groupe $groupe): self
+    {
+        if (!$this->groupes->contains($groupe)) {
+            $this->groupes[] = $groupe;
+            $groupe->addFormateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGroupe(Groupe $groupe): self
+    {
+        if ($this->groupes->removeElement($groupe)) {
+            $groupe->removeFormateur($this);
         }
 
         return $this;

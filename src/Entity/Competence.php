@@ -47,7 +47,7 @@ class Competence
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"competence:read","grpecompetence:read","niveau:read"})
+     * @Groups({"competence:read","grpecompetence:read", "grpecompetence:write", "niveau:read"})
      */
     private $id;
 

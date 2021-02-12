@@ -23,11 +23,11 @@ class ProfileController extends AbstractController
      *     }
      * )
      */
-    public function getProfile(Profile $profil)
-    {
-        dd("test");
-        //return $this->json($profil, Response::HTTP_OK);
-    }
+    // public function getProfile(Profile $profil)
+    // {
+    //     dd("test");
+    //     //return $this->json($profil, Response::HTTP_OK);
+    // }
 
     /**
      * @Route(

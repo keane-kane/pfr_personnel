@@ -15,8 +15,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      routePrefix="admin",
  *      denormalizationContext ={"groups"={"tags:write"}},
  *      normalizationContext   ={"groups"={"tags:read"}},
- *      collectionOperations   = {"GET","POST"},
- *      itemOperations         ={"GET","PUT","DELETE"},
+ *      collectionOperations   = {"GET"= { "path" = "/tags",},
+ *                                "POST" = { "path" = "/tags",},
+ *                             },
+ *      itemOperations         ={"GET"= { "path" = "/tags/{id}",},
+ *                               "PUT"={ "path" = "/tags/{id}", },
+ *                               "DELETE" = { "path" = "/tags/{id}",}
+ *                             },
  * )
  * @ORM\Entity(repositoryClass=TagsRepository::class)
  * 
@@ -27,7 +32,7 @@ class Tags
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"tags:read","grptags:read"})
+     * @Groups({"tags:read","grptags:read","grptags:write"})
      */
     private $id;
 
@@ -50,7 +55,7 @@ class Tags
     private $archive;
 
     /**
-     * @ORM\ManyToMany(targetEntity=GroupTags::class, inversedBy="tags")
+     * @ORM\ManyToMany(targetEntity=GroupTags::class, inversedBy="tags",cascade={"persist"})
      * @Groups({"tags:read", "tags:write"})
      */
     private $groupTags;

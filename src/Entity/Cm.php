@@ -16,29 +16,29 @@ use ApiPlatform\Core\Annotation\ApiSubresource;
  *     },
  *     collectionOperations={
  *        "GET"={
- *              "path"="/users/cm",
+ *              "path"="/users/cms",
  *              "security"="is_granted('ROLE_ADMIN')",
  *              "security_message"="Acces refusé vous n'avez pas l'autorisation"
  *         }, 
  *        "POST"={
- *              "path"="/users/cm",
- *              "security"="is_granted('EDIT')",
+ *              "path"="/users/cms",
+ *              "security"="is_granted('EDIT', object)",
  *              "security_message"="Acces refusé vous n'avez pas l'autorisation"
  *         }
  *      },
  *     itemOperations={
  *         "GET"={
- *              "path"="/users/cm/{id}", 
+ *              "path"="/users/cms/{id}", 
  *              "security"="is_granted('VIEW')",
  *              "security_message"="Acces refusé vous n'avez pas l'autorisation"
  *          },
  *         "PUT"={
- *              "path"="/users/cm/{id}",
+ *              "path"="/users/cms/{id}",
  *              "security"="is_granted('PUT')",
  *              "security_message"="Acces refusé vous n'avez pas l'autorisation"
  *           },
  *          "DELETE"={
- *                "path"="/users/cm/{id}",
+ *                "path"="/users/cms/{id}",
  *              "security"="is_granted('DELETE')",
  *              "security_message"="Acces refusé vous n'avez pas l'autorisation" 
  *            }

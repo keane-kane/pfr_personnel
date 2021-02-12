@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 
@@ -18,6 +19,9 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
  * @ApiFilter(BooleanFilter::class, properties={"archive"=false})
  * @ApiResource(
  *    routePrefix= "/admin",
+ * 
+ *      denormalizationContext ={"groups"={"profil:write"}},
+ *      normalizationContext   ={"groups"={"profil:read"}},
  *    attributes={
  *         "pagination_items_per_page"=20,
  *          "security"="is_granted('ROLE_ADMIN')",
@@ -54,18 +58,21 @@ class Profile
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"profil:read", "profil:write"})
      */
     protected $id;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=false)
      * @Assert\NotBlank(message="Le Libelle est obligatoire")
+     * @Groups({"profil:read", "profil:write"})
      */
     private $libelle;
 
     /**
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="profil" ,cascade={"persist","remove"})
      * @ApiSubresource()
+     * @Groups({"profil:read"})
      * 
      */
     private $users;
@@ -73,6 +80,7 @@ class Profile
     /**
      * @ORM\Column(type="boolean", nullable=false)
      * @Assert\NotBlank(message="Le Libelle est obligatoire")
+     * @Groups({"profil:read", "profil:write"})
      */
     private $archive = 0;
 

@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping\JoinColumn;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
@@ -21,7 +22,28 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
  *      {"user" = "User", "apprenant" = "Apprenant", "admin"="Admin", "formateur"="Formateur", " cm"="Cm"}
  *  )
  * @ApiFilter(BooleanFilter::class, properties={"archive"=false})
- * @ApiResource()
+ * @ApiResource(
+ *  
+ *      normalizationContext   ={"groups"={"users:read"}},
+ *      attributes={
+ *          "pagination_items_per_page"=30,
+ *          "security"="is_granted('ROLE_ADMIN')",
+ *          "security_message"="Acces refusé vous n'avez pas l'autorisation"
+ *     },
+ *     collectionOperations={
+ *          "get"={
+ *                "path"="/users",
+ *                "method"="get"
+ *              }, 
+ *        
+ *      },
+ *     itemOperations={
+ *         "GET"={
+ *              "path"="/users/{id}"
+ *            },
+ *        
+ *  }
+ * )
  */
 class User implements UserInterface
 {
@@ -29,12 +51,14 @@ class User implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"users:read"})
      */
     protected $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=false)
      * @Assert\NotBlank(message="Le Libelle est obligatoire")
+     * @Groups({"users:read","profil:read"})
      */
     protected $username;
 
@@ -56,21 +80,25 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"profil:read"})
      */
     protected $prenom;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"profil:read"})
      */
     protected $nom;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"profil:read"})
      */
     protected $email;
 
     /**
      * @ORM\Column(type="string")
+     * @Groups({"profil:read"})
      */
     protected $phone;
 

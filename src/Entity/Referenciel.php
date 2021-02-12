@@ -14,6 +14,39 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
+ *       routePrefix= "admin",
+ *       denormalizationContext ={"groups"={"ref:write"}},
+ *       normalizationContext   ={"groups"={"ref:read"}},
+ *      attributes={
+ *      },
+ *      collectionOperations={
+ *        "GET"={
+ *              "path"="/referenciels"
+ *         }, 
+ *         "get_grpcomptence_in_ref"={
+ *                "path"="/referenciels/grpcompetences",
+ *                "method" = "GET",
+ *          },
+ *        "POST"={
+ *              "path"="/referenciels"
+ *         }
+ *      },
+ *     itemOperations={
+ *         "GET"={
+ *              "path"="/referenciels/{id}"
+ *          },
+ *          "get_grpcomptence_in_ref"={
+ *                "path"="/referenciels/{id_ref}/grpcompetences/{id}",
+ *                "method" = "GET",
+ *          },
+ *         "PUT"={
+ *              "path"="/referenciels/{id}"
+ *           },
+ *          "DELETE"={
+ *                "path"="/referenciels/{id}"
+ *            }
+ *   }
+ *      
  * )
  * @ORM\Entity(repositoryClass=ReferencielRepository::class)
  */
@@ -23,12 +56,14 @@ class Referenciel
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"ref:read", "ref:write"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank()
+     * @Groups({"ref:read",  "ref:write"})
      *
      */
     private $libelle;
@@ -36,47 +71,49 @@ class Referenciel
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank()
-     *
+     * @Groups({"ref:read",  "ref:write"})
      */
     private $presentation;
 
     /**
      * @ORM\Column(type="string", length=255)
-     *
+     * @Groups({"ref:read",  "ref:write"})
      */
     private $competence_viser;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     *
+     * @ORM\Column(type="blob", nullable = true)
+     * @Groups({"ref:read",  "ref:write"})
      */
     private $programmes;
 
     /**
      * @ORM\Column(type="string", length=255)
-     *
+     * @Groups({"ref:read",  "ref:write"})
      */
     private $criteres_evaluation;
 
     /**
      * @ORM\Column(type="string", length=255)
-     *
+     * @Groups({"ref:read",  "ref:write"})
      */
     private $criteres_admission;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
-     * 
+     * @Groups({"ref:read",  "ref:write"})
      */
     private $archive = 0;
 
     /**
      * @ORM\ManyToMany(targetEntity=GroupCompetence::class, mappedBy="referenciel")
+     * @Groups({"ref:read",  "ref:write"})
      */
     private $groupeCompetences;
 
     /**
      * @ORM\ManyToMany(targetEntity=Promo::class, inversedBy="referenciels")
+     * @Groups({"ref:read",  "ref:write"})
      */
     private $promos;
 
@@ -128,12 +165,14 @@ class Referenciel
         return $this;
     }
 
-    public function getProgrammes(): ?string
+    public function getProgrammes()
     {
-        return $this->programmes;
+        $programmes = @stream_get_contents($this->programmes);
+        @fclose($this->programmes);
+        return base64_encode($programmes);
     }
 
-    public function setProgrammes(string $programmes): self
+    public function setProgrammes( $programmes): self
     {
         $this->programmes = $programmes;
 
