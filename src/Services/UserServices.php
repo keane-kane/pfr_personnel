@@ -57,6 +57,8 @@ final class UserServices
         if (!$user) $user = json_decode($request->getContent(), true);
 
         $user["avatar"] = $this->_files($request);
+        
+        
         $user = $serializer->denormalize($user, $entity);
         $password = "pass_1234";
         $user->setPassword($encoder->encodePassword($user, $password));

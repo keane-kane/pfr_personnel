@@ -34,6 +34,10 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
  *          "get"={
  *                "path"="/users",
  *                "method"="get"
+ *              },  
+ *           "post"={
+ *                "path"="/users",
+ *                "method"="post"
  *              }, 
  *        
  *      },
@@ -116,7 +120,7 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="boolean")
      */
-    protected $archive = false;
+    protected $archive=false;
 
 
  
@@ -255,10 +259,13 @@ class User implements UserInterface
     }
 
     public function getAvatar()
-    {
-        $avatar = @stream_get_contents($this->avatar);
-        @fclose($this->avatar);
-        return base64_encode($avatar);
+    {   
+        if($this->avatar != null){
+            $avatar = @stream_get_contents($this->avatar);
+            @fclose($this->avatar);
+            return base64_encode($avatar);
+        }
+        return null;    
     }
 
     public function setAvatar($avatar): self

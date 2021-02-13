@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Entity\Admin;
 use App\Repository\ProfileRepository;
 use App\Services\UserServices;
-use App\Repository\UserRepository;
+use App\Repository\AdminRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -53,7 +53,7 @@ class AdminController extends AbstractController
      */
     public function updateAdmin(
         Request $request,
-        UserRepository $userRepository,
+        AdminRepository $adminRepository,
         UserServices $file,
         EntityManagerInterface $manager,
         ProfileRepository $profilripo,

@@ -79,10 +79,9 @@ class Profile
 
     /**
      * @ORM\Column(type="boolean", nullable=false)
-     * @Assert\NotBlank(message="Le Libelle est obligatoire")
      * @Groups({"profil:read", "profil:write"})
      */
-    private $archive = 0;
+    protected $archive=false;
 
     public function __construct()
     {

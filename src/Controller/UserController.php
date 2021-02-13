@@ -46,4 +46,48 @@ class UserController extends AbstractController
          return $this->json($profil);
     }
 
+     /**
+     * @Route(
+     *     path="api/users",
+     *     methods={"POST"},
+     * )
+     */
+    public function addUser(
+        Request $request,
+        SerializerInterface $serializer,
+        ValidatorInterface $validator,
+        UserServices $file,
+        EntityManagerInterface $manager,
+        UserPasswordEncoderInterface $encoder
+    )
+    {   
+        $user = $file->newUser($request, $serializer,$validator,self::USER,$manager,$encoder);
+        return $this->json($user);
+    }
+
+     /**
+     * @Route(
+     *     path="api/users/{id}",
+     *     methods={"PUT"},
+     *     defaults={
+     *          "__controller"="App\Controller\UserController::updateUser",
+     *          "__api_resource_class"=User::class,
+     *          "__api_collection_operation_name"="update-user"
+     *     }
+     * )
+     */
+    public function updateUser(
+        Request $request,
+        UserRepository $userRepository,
+        UserServices $file,
+        EntityManagerInterface $manager,
+        ProfileRepository $profilripo,
+        UserPasswordEncoderInterface $encoder
+    )
+    {
+         $user = $file->updateUser($request, $userRepository,$profilripo,$manager,$encoder);
+        //  dd($user);
+        return $this->json($user, Response::HTTP_CREATED);
+    }
+
 }
