@@ -77,9 +77,10 @@ class Referenciel
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
      * @Groups({"ref:read",  "ref:write"})
      */
-    private $competence_viser;
+    private $competenceViser;
 
     /**
      * @ORM\Column(type="blob", nullable = true)
@@ -91,19 +92,19 @@ class Referenciel
      * @ORM\Column(type="string", length=255)
      * @Groups({"ref:read",  "ref:write"})
      */
-    private $criteres_evaluation;
+    private $criteresEvaluation;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"ref:read",  "ref:write"})
      */
-    private $criteres_admission;
+    private $criteresAdmission;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"ref:read",  "ref:write"})
      */
-    private $archive = 0;
+    private $archive = false;
 
     /**
      * @ORM\ManyToMany(targetEntity=GroupCompetence::class, mappedBy="referenciel")
@@ -155,21 +156,23 @@ class Referenciel
 
     public function getCompetenceViser(): ?string
     {
-        return $this->competence_viser;
+        return $this->competenceViser;
     }
 
-    public function setCompetenceViser(string $competence_viser): self
+    public function setCompetenceViser(string $competenceViser): self
     {
-        $this->competence_viser = $competence_viser;
+        $this->competenceViser = $competenceViser;
 
         return $this;
     }
 
     public function getProgrammes()
-    {
+    {   if ($this->programmes) {
         $programmes = @stream_get_contents($this->programmes);
         @fclose($this->programmes);
         return base64_encode($programmes);
+        }
+        return;
     }
 
     public function setProgrammes( $programmes): self
@@ -181,24 +184,24 @@ class Referenciel
 
     public function getCriteresEvaluation(): ?string
     {
-        return $this->criteres_evaluation;
+        return $this->criteresEvaluation;
     }
 
-    public function setCriteresEvaluation(string $criteres_evaluation): self
+    public function setCriteresEvaluation(string $criteresEvaluation): self
     {
-        $this->criteres_evaluation = $criteres_evaluation;
+        $this->criteresEvaluation = $criteresEvaluation;
 
         return $this;
     }
 
     public function getCriteresAdmission(): ?string
     {
-        return $this->criteres_admission;
+        return $this->criteresAdmission;
     }
 
-    public function setCriteresAdmission(string $criteres_admission): self
+    public function setCriteresAdmission(string $criteresAdmission): self
     {
-        $this->criteres_admission = $criteres_admission;
+        $this->criteresAdmission = $criteresAdmission;
 
         return $this;
     }

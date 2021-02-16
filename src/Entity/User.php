@@ -45,6 +45,12 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
  *         "GET"={
  *              "path"="/users/{id}"
  *            },
+ *         "PUT"={
+ *             "path"="/users/{id}"
+ *          },
+ *        "DELETE"={
+ *             "path"="/users/{id}"
+ *          },
  *        
  *  }
  * )
@@ -55,7 +61,7 @@ class User implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"users:read"})
+     * @Groups({"users:read", "profil:read"})
      */
     protected $id;
 
@@ -84,41 +90,44 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"profil:read"})
+     * @Groups({"users:read","profil:read"})
      */
     protected $prenom;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"profil:read"})
+     * @Groups({"users:read","profil:read"})
      */
     protected $nom;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"profil:read"})
+     * @Groups({"users:read","profil:read"})
      */
     protected $email;
 
     /**
      * @ORM\Column(type="string")
-     * @Groups({"profil:read"})
+     * @Groups({"users:read","profil:read"})
      */
     protected $phone;
 
     /**
      * @ORM\Column(type="blob", nullable =true)
+     * @Groups({"users:read","profil:read"})
      */
     protected $avatar;
 
     /**
      * @ORM\ManyToOne(targetEntity=Profile::class, inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"users:read","profil:read"})
      */
     protected $profil;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups({"users:read","profil:read"})
      */
     protected $archive=false;
 
@@ -265,7 +274,7 @@ class User implements UserInterface
             @fclose($this->avatar);
             return base64_encode($avatar);
         }
-        return null;    
+        return;    
     }
 
     public function setAvatar($avatar): self

@@ -11,8 +11,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass=PromoRepository::class)
-  * @ApiResource(
-        routePrefix = "amdin",
+ * @ApiResource(
+ *   routePrefix= "admin",
  *      attributes={
  *         "pagination_enabled"=false
  *     },
@@ -97,7 +97,7 @@ class Promo
     /**
      * @ORM\Column(type="boolean")
      */
-    private $archive;
+    private $archive = false;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -120,7 +120,7 @@ class Promo
     private $description;
 
     /**
-     * @ORM\Column(type="blob")
+     * @ORM\Column(type="blob", nullable=true)
      */
     private $avatar;
 
@@ -268,9 +268,12 @@ class Promo
 
     public function getAvatar()
     {
-        $avatar = @stream_get_contents($this->avatar);
-        @fclose($this->avatar);
-        return base64_encode($avatar);
+        if($this->avatar != null){
+            $avatar = @stream_get_contents($this->avatar);
+            @fclose($this->avatar);
+            return base64_encode($avatar);
+        }
+        return null;  
     }
 
     public function setAvatar($avatar): self

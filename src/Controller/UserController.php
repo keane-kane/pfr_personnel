@@ -38,13 +38,13 @@ class UserController extends AbstractController
      *      methods={"GET"}
      * )
      */
-    public function getProfil(UserRepository $repo)
-    {
+    // public function getProfil(UserRepository $repo)
+    // {
        
-        $profil = $repo->findBy(['archive' => false]);
-         //dd($profil);
-         return $this->json($profil);
-    }
+    //     $profil = $repo->findBy(['archive' => false]);
+    //      //dd($profil);
+    //      return $this->json($profil);
+    // }
 
      /**
      * @Route(

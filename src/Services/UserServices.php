@@ -83,8 +83,9 @@ final class UserServices
         $user = $useripo->findOneBy(["id" => $request->attributes->get('id')]);
         $datas =  $this->formBinary($request);
         $user = $this->setterDynamic($datas, $user, $profilripo, $encoder);
-        $user = $this->flushUser($manager, $user);
-        return $user;
+        $users = $this->flushUser($manager, $user);
+        //dd($users);
+        return $users;
     }
     // setter dynamique 
     public function setterDynamic($data, $u, $profilripo, $encoder)
@@ -115,8 +116,6 @@ final class UserServices
     {
         $manager->persist($user);
         $manager->flush();
-        global $avatar;
-        if ($avatar) fclose($avatar);
         return $user;
     }
 }

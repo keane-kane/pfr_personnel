@@ -43,12 +43,7 @@ class AdminController extends AbstractController
      /**
      * @Route(
      *     path="api/admin/users/{id}",
-     *     methods={"PUT"},
-     *     defaults={
-     *          "__controller"="App\Controller\AdminController::addAdmin",
-     *          "__api_resource_class"=Admin::class,
-     *          "__api_collection_operation_name"="add_Admin"
-     *     }
+     *     methods={"PUT"}
      * )
      */
     public function updateAdmin(
@@ -60,7 +55,7 @@ class AdminController extends AbstractController
         UserPasswordEncoderInterface $encoder
     )
     {
-         $user = $file->updateUser($request, $userRepository,$profilripo,$manager,$encoder);
+         $user = $file->updateUser($request, $adminRepository,$profilripo,$manager,$encoder);
         //  dd($user);
         return $this->json($user, Response::HTTP_CREATED);
     }

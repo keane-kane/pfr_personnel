@@ -19,10 +19,10 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
  * @ApiFilter(BooleanFilter::class, properties={"archive"=false})
  * @ApiResource(
  *    routePrefix= "/admin",
- * 
  *      denormalizationContext ={"groups"={"profil:write"}},
  *      normalizationContext   ={"groups"={"profil:read"}},
  *    attributes={
+ *        "force_eager"=false,
  *         "pagination_items_per_page"=20,
  *          "security"="is_granted('ROLE_ADMIN')",
  *          "security_message"="Acces refusé vous n'avez pas l'RTRYUTIOIUYT"
