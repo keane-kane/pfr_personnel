@@ -76,7 +76,7 @@ class UserController extends AbstractController
      *     }
      * )
      */
-    public function updateUser(
+    public function updatUser(
         Request $request,
         UserRepository $userRepository,
         UserServices $file,
