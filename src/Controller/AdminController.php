@@ -21,6 +21,19 @@ class AdminController extends AbstractController
    
     public const ADMIN = "App\Entity\Admin";
     
+
+     /**
+     * @Route(
+     *      path="/api/admin/users",
+     *      methods={"GET"}
+     * )
+     */
+    public function all(AdminRepository $repo)
+    {
+        $cm = $repo->findByArchive("0");
+        return $this->json($cm, Response::HTTP_OK);
+    }
+    
     /**
      * @Route(
      *     path="api/admin/users",

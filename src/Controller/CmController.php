@@ -20,6 +20,24 @@ class CmController extends AbstractController
    
     public const CM = "App\Entity\Cm";
 
+
+  /**
+     * @Route(
+     *      path="/api/admin/users/cm",
+     *      methods={"GET"}
+     * )
+     */
+    public function all(CmRepository $repo)
+    {
+        $cm = $repo->findByArchive("0");
+        return $this->json($cm, Response::HTTP_OK);
+    }
+
+
+
+
+
+
     /**
      * @Route(
      *     path="/api/admin/users/cms",

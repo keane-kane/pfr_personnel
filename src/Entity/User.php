@@ -21,7 +21,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
  * @ORM\DiscriminatorMap(
  *      {"user" = "User", "apprenant" = "Apprenant", "admin"="Admin", "formateur"="Formateur", " cm"="Cm"}
  *  )
- * @ApiFilter(BooleanFilter::class, properties={"archive"=false})
+ * @ApiFilter(BooleanFilter::class, properties={"archive"=0})
  * @ApiResource(
  *  
  *      normalizationContext   ={"groups"={"users:read"}},

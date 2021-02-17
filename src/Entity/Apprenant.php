@@ -32,7 +32,6 @@ use ApiPlatform\Core\Annotation\ApiSubresource;
  *     itemOperations={
  *         "GET"={
  *              "path"="/users/apprenants/{id}",
- *              "security"="is_granted('ROLE_APPRENANT')",
  *              "security_message"="Acces refusé vous n'avez pas l'autorisation"
  *          },
  *         "PUT"={

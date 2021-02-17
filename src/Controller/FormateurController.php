@@ -21,6 +21,17 @@ class FormateurController extends AbstractController
     public const FORMATEUR = "App\Entity\Formateur";
     
 
+     /**
+     * @Route(
+     *      path="/api/admin/users/formateurs",
+     *      methods={"GET"}
+     * )
+     */
+    public function all(FormateurRepository $repo)
+    {
+        $formateur = $repo->findByArchive("0");
+        return $this->json($formateur, Response::HTTP_OK);
+    }
     /**
      * @Route(
      *     path="api/admin/formateurs",

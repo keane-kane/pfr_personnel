@@ -20,8 +20,23 @@ class ApprenantController extends AbstractController
    
     public const APPRENANT = "App\Entity\Apprenant";
     
-
-    
+    /**
+     * @Route(
+     *      name="all_apprenants",
+     *      path="/api/admin/users/apprenants",
+     *      methods={"GET"},
+     *      defaults={
+     *          "_controller"="\app\Controller\ApprenantController::all",
+     *          "_api_resource_class"=Apprenant::class,
+     *          "_api_collection_operation_name"="all_apprenants"
+     *      }
+     * )
+     */
+    public function all(ApprenantRepository $repo)
+    {
+        $apprenant = $repo->findByArchive("0");
+        return $this->json($apprenant, Response::HTTP_OK);
+    }
 
     /**
      * @Route(
